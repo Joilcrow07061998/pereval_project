@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 
+from app import models  # Регистрируем модели перед созданием таблиц.
 from app.database import Base, SessionLocal, engine
-from app import models
 from app.repository import PassRepository
 from app.schemas import PassSubmission
 
@@ -13,11 +13,6 @@ app = FastAPI(title="API перевалов ФСТР")
 @app.on_event("startup")
 def create_tables() -> None:
     Base.metadata.create_all(bind=engine)
-
-
-@app.get("/")
-def home() -> dict[str, str]:
-    return {"message": "API для отправки данных о горных перевалах ФСТР"}
 
 
 @app.post("/submitData")
