@@ -65,7 +65,7 @@ class PassImage(Base):
     __tablename__ = "pass_images"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    pass_id: Mapped[int] = mapped_column(ForeignKey("mountain_passes.id", ondelete="CASCADE'), index=True)
+    pass_id: Mapped[int] = mapped_column(ForeignKey("mountain_passes.id", ondelete="CASCADE"), index=True)
     title: Mapped[str | None] = mapped_column(String(255), nullable=True)
     data: Mapped[str] = mapped_column(Text)
 
