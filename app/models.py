@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import DateTime, Float, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -26,7 +28,7 @@ class MountainPass(Base):
     other_titles: Mapped[str | None] = mapped_column(Text, nullable=True)
     connect: Mapped[str | None] = mapped_column(Text, nullable=True)
     add_time: Mapped[str] = mapped_column(String(50))
-    date_added: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    date_added: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     status: Mapped[str] = mapped_column(String(20), default="new", server_default="new", index=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"))
 
