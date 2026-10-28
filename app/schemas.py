@@ -1,5 +1,3 @@
-from typing import Any
-
 from pydantic import BaseModel, ConfigDict
 
 
@@ -53,12 +51,14 @@ class PassSubmission(BaseModel):
     def missing_required_fields(self) -> list[str]:
         missing = []
         for field in ("title", "add_time", "user", "coords", "level"):
-            if getattr(self, field) is None:
+            value = getattr(self, field)
+            if value is None or (isinstance(value, str) and not value.strip()):
                 missing.append(field)
 
         if self.user is not None:
             for field in ("email", "fam", "name", "phone"):
-                if not getattr(self.user, field):
+                value = getattr(self.user, field)
+                if value is None or not value.strip():
                     missing.append(f"user.{field}")
 
         if self.coords is not None:
@@ -67,9 +67,3 @@ class PassSubmission(BaseModel):
                     missing.append(f"coords.{field}")
 
         return missing
-
-
-class SubmissionResult(BaseModel):
-    status: int
-    message: str | None = None
-    id: int | None = None
