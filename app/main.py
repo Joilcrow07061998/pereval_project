@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
@@ -7,12 +9,18 @@ from app.database import Base, SessionLocal, engine
 from app.repository import PassRepository
 from app.schemas import PassSubmission
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 app = FastAPI(title="API перевалов ФСТР")
 
 
 @app.on_event("startup")
 def create_tables() -> None:
-    Base.metadata.create_all(bind=engine)
+    try:
+        Base.metadata.create_all(bind=engine)
+    except SQLAlchemyError:
+        logger.exception("Не удалось подключиться к базе данных при запуске")
 
 
 @app.post("/submitData")
@@ -37,6 +45,7 @@ def submit_data(submission: PassSubmission) -> JSONResponse:
         )
     except SQLAlchemyError:
         session.rollback()
+        logger.exception("Не удалось сохранить данные о перевале")
         return JSONResponse(
             status_code=500,
             content={
